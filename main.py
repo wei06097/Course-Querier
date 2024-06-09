@@ -1,32 +1,32 @@
 from Course import Course
-print('==============================')
-print('type | 0:專業 1:通識 2:外語 3:體育')
-TYPE = input('type: ')
-KEYWORD = input('關鍵字: ')
-print('==============================')
 
-def analysis_Course(courses):
-    count = 0
-    message = ''
-    for course in courses:
-        amount1 = int(course["Restrict1"]) - int(course["ChooseStudent"])
-        amount2 = int(course["Restrict2"]) - int(course["ChooseStudent"])
-        amount = min(amount1, amount2)
-        if (amount > 0 and amount < 500):
-            count += 1
-            message += f'No.{count}  ({course["Node"]})  {course["CourseName"]}\n'
-            message += f'{course["CourseNo"]}  {course["CourseTeacher"]}\n'
-            message += f'残り: {amount} '
-            message += f'今: {course["ChooseStudent"]}\n\n'
-    if (message == ''): message = None
-    return message
+def bachelor(course):
+    print('type | 0:專業 1:通識 2:外語 3:體育')
+    type = input('type: ')
+    name = input('name: ')
+    print('========================================')
+    if (type == '0'): response = course.get_major(CourseName=name)
+    elif (type == '1'): response = course.get_general(CourseName=name)
+    elif (type == '2'): response = course.get_foreign_lang(CourseName=name)
+    elif (type == '3'): response = course.get_pe(CourseName=name)
+    else: exit("type error")
+    message = course.analyze(response)
+    print(message)
+
+def master(course):
+    file = './data.txt'
+    try:
+        with open(file, 'r') as f:
+            CourseNos = f.read().splitlines()
+    except:
+        exit("file not found")
+    data = []
+    for CourseNo in CourseNos:
+        data += course.get_master(CourseNo=CourseNo)
+    message = course.analyze(data)
+    print(message)
 
 if __name__ == '__main__':
-    courses = None
-    remote = Course(Semester="1122")
-    if (TYPE == '0'): courses = remote.get_Major_Data(KEYWORD)
-    elif (TYPE == '1'): courses = remote.get_General_Data(KEYWORD)
-    elif (TYPE == '2'): courses = remote.get_ForeignLang_Data(KEYWORD)
-    elif (TYPE == '3'): courses = remote.get_PE_Data(KEYWORD)
-    else: exit("type 輸入錯誤")
-    print(analysis_Course(courses))
+    course = Course(Semester="1131")
+    # bachelor(course)
+    master(course)
